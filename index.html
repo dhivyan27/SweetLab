@@ -8,10 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             font-family: 'Quicksand', sans-serif;
-            background-color: #FFF0F5; /* Baby Pink Background */
+            background-color: #fff6f6; /* Baby Pink Background */
             color: #555; /* Soft Grey Text */
         }
         /* Custom scrollbar for a softer look (optional) */
@@ -63,11 +64,15 @@
     <div class="w-full max-w-3xl">
 
         <header class="text-center mb-8 sm:mb-12">
-            <h1 class="text-4xl sm:text-5xl font-bold text-pink-500">
-                Sweet <span class="title-icon">💖</span> Deliveries
-            </h1>
-            <p class="text-pink-400 mt-2 text-lg">Find your delivery fee!</p>
-        </header>
+            <div class="flex items-center justify-center space-x-4 mb-2">
+              <img src="logo.jpeg" alt="SweetLab Logo" class="h-32 w-32 rounded-full" />
+              <h1 class="text-4xl sm:text-5xl font-bold text-pink-500">
+                SweetLab Delivery Prices
+              </h1>
+            </div>
+            <p class="text-pink-400 text-lg">Find your delivery fee!</p>
+          </header>
+          
 
         <section class="mb-8">
             <div class="relative">
@@ -91,13 +96,21 @@
         </section>
 
         <footer class="text-center mt-10 py-6 border-t border-pink-200">
-            <p class="text-pink-400 text-sm">&copy; 2025 Sweet Deliveries. All rights reserved.</p>
-            <div class="mt-2 space-x-4">
-                <a href="#" class="text-pink-500 hover:text-pink-600 transition-colors">Contact Us</a>
-                <span class="text-pink-300">|</span>
-                <a href="#" class="text-pink-500 hover:text-pink-600 transition-colors">Follow Us</a>
+            <p class="text-pink-400 text-sm">&copy; 2025 SweetLab by Vaishi. All rights reserved.</p>
+            <div class="mt-2 space-x-6 text-xl">
+              <a href="mailto:sweetlabbyvaishi@gmail.com" class="text-pink-500 hover:text-pink-600 transition-colors" title="Email">
+                <i class="fas fa-envelope"></i>
+              </a>
+              <a href="https://www.instagram.com/sweetlab_by_vaishi?igsh=ejF4NnRlbmFhZTk3&utm_source=qr" class="text-pink-500 hover:text-pink-600 transition-colors" title="Instagram" target="_blank">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.facebook.com/profile.php?id=61575968900078" class="text-pink-500 hover:text-pink-600 transition-colors" title="Facebook" target="_blank">
+                <i class="fab fa-facebook"></i>
+              </a>
             </div>
-        </footer>
+          </footer>
+          
+          
 
     </div>
 
