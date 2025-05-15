@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Deliveries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #FFF0F5; /* Baby Pink Background */
+            color: #555; /* Soft Grey Text */
+        }
+        /* Custom scrollbar for a softer look (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF5F7; /* Lighter pink for track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFC0CB; /* Pink for thumb */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFB6C1; /* Darker pink on hover */
+        }
+        .bubbly-button {
+            transition: all 0.3s ease;
+        }
+        .bubbly-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3); /* Soft pink shadow */
+        }
+        .search-input:focus {
+            border-color: #FF69B4; /* Hot Pink for focus */
+            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.2);
+        }
+        .card-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+        /* Cute heart icon for the title */
+        .title-icon {
+            display: inline-block;
+            animation: heartbeat 1.5s infinite ease-in-out;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start py-6 sm:py-12 px-4">
+
+    <div class="w-full max-w-3xl">
+
+        <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold text-pink-500">
+                Sweet <span class="title-icon">💖</span> Deliveries
+            </h1>
+            <p class="text-pink-400 mt-2 text-lg">Find your delivery fee!</p>
+        </header>
+
+        <section class="mb-8">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Enter suburb or postcode..."
+                    class="w-full p-4 pl-10 text-lg text-gray-700 bg-white border-2 border-pink-200 rounded-full shadow-sm focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-300 transition-all duration-300 search-input"
+                >
+                <svg class="w-6 h-6 text-pink-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </section>
+
+        <section id="suburbListContainer" class="bg-white/80 backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-semibold text-pink-500 mb-4 text-center sm:text-left">Delivery Zones & Pricing</h2>
+            <div id="suburbList" class="max-h-[60vh] sm:max-h-[50vh] overflow-y-auto space-y-3 pr-2">
+                </div>
+            <p id="noResultsMessage" class="text-center text-gray-500 py-8 hidden">
+                🌸 Oh dear, no matching suburbs found! Try a different search? 🌸
+            </p>
+        </section>
+
+        <footer class="text-center mt-10 py-6 border-t border-pink-200">
+            <p class="text-pink-400 text-sm">&copy; 2025 Sweet Deliveries. All rights reserved.</p>
+            <div class="mt-2 space-x-4">
+                <a href="#" class="text-pink-500 hover:text-pink-600 transition-colors">Contact Us</a>
+                <span class="text-pink-300">|</span>
+                <a href="#" class="text-pink-500 hover:text-pink-600 transition-colors">Follow Us</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // Suburb data as provided
+        const suburbsData = [
+            { postcode: "3146", suburb: "Glen Iris", deliveryFee: "$20.00" },
+            { postcode: "3072", suburb: "Preston", deliveryFee: "$35.00" },
+            { postcode: "3067", suburb: "Abbotsford", deliveryFee: "$30.00" },
+            { postcode: "3040", suburb: "Aberfeldie", deliveryFee: "$40.00" },
+            { postcode: "3042", suburb: "Airport West", deliveryFee: "$45.00" },
+            { postcode: "3206", suburb: "Albert Park", deliveryFee: "$35.00" },
+            { postcode: "3020", suburb: "Albion", deliveryFee: "$50.00" },
+            { postcode: "3078", suburb: "Alphington", deliveryFee: "$30.00" },
+            { postcode: "3018", suburb: "Altona", deliveryFee: "$40.00" },
+            { postcode: "3028", suburb: "Altona Meadows", deliveryFee: "$45.00" },
+            { postcode: "3025", suburb: "Altona North", deliveryFee: "$40.00" },
+            { postcode: "3022", suburb: "Ardeer", deliveryFee: "$45.00" },
+            { postcode: "3143", suburb: "Armadale", deliveryFee: "$25.00" },
+            { postcode: "3032", suburb: "Ascot Vale", deliveryFee: "$40.00" },
+            { postcode: "3147", suburb: "Ashburton", deliveryFee: "$15.00" },
+            { postcode: "3147", suburb: "Ashwood", deliveryFee: "$15.00" },
+            { postcode: "3195", suburb: "Aspendale", deliveryFee: "$35.00" },
+            { postcode: "3195", suburb: "Aspendale Gardens", deliveryFee: "$30.00" },
+            { postcode: "3049", suburb: "Attwood", deliveryFee: "$50.00" },
+            { postcode: "3034", suburb: "Avondale Heights", deliveryFee: "$50.00" },
+            { postcode: "3183", suburb: "Balaclava", deliveryFee: "$25.00" },
+            { postcode: "3103", suburb: "Balwyn", deliveryFee: "$20.00" },
+            { postcode: "3104", suburb: "Balwyn North", deliveryFee: "$25.00" },
+            { postcode: "3175", suburb: "Bangholme", deliveryFee: "$30.00" },
+            { postcode: "3911", suburb: "Baxter", deliveryFee: "$40.00" },
+            { postcode: "3153", suburb: "Bayswater", deliveryFee: "$20.00" },
+            { postcode: "3153", suburb: "Bayswater North", deliveryFee: "$25.00" },
+            { postcode: "3807", suburb: "Beaconsfield", deliveryFee: "$35.00" },
+            { postcode: "3193", suburb: "Beaumaris", deliveryFee: "$25.00" },
+            { postcode: "3160", suburb: "Belgrave", deliveryFee: "$25.00" },
+            { postcode: "3160", suburb: "Belgrave Heights", deliveryFee: "$30.00" },
+            { postcode: "3160", suburb: "Belgrave South", deliveryFee: "$30.00" },
+            { postcode: "3081", suburb: "Bellfield", deliveryFee: "$30.00" },
+            { postcode: "3204", suburb: "Bentleigh", deliveryFee: "$20.00" },
+            { postcode: "3165", suburb: "Bentleigh East", deliveryFee: "$20.00" },
+            { postcode: "3806", suburb: "Berwick", deliveryFee: "$30.00" },
+            { postcode: "3193", suburb: "Black Rock", deliveryFee: "$30.00" },
+            { postcode: "3130", suburb: "Blackburn", deliveryFee: "$15.00" },
+            { postcode: "3130", suburb: "Blackburn North", deliveryFee: "$15.00" },
+            { postcode: "3130", suburb: "Blackburn South", deliveryFee: "$15.00" },
+            { postcode: "3196", suburb: "Bonbeach", deliveryFee: "$35.00" },
+            { postcode: "3155", suburb: "Boronia", deliveryFee: "$20.00" },
+            { postcode: "3977", suburb: "Botanic Ridge", deliveryFee: "$40.00" },
+            { postcode: "3128", suburb: "Box Hill", deliveryFee: "$20.00" },
+            { postcode: "3129", suburb: "Box Hill North", deliveryFee: "$20.00" },
+            { postcode: "3128", suburb: "Box Hill South", deliveryFee: "$15.00" },
+            { postcode: "3195", suburb: "Braeside", deliveryFee: "$30.00" },
+            { postcode: "3019", suburb: "Braybrook", deliveryFee: "$40.00" },
+            { postcode: "3088", suburb: "Briar Hill", deliveryFee: "$30.00" },
+            { postcode: "3186", suburb: "Brighton", deliveryFee: "$25.00" },
+            { postcode: "3187", suburb: "Brighton East", deliveryFee: "$25.00" },
+            { postcode: "3047", suburb: "Broadmeadows", deliveryFee: "$45.00" },
+            { postcode: "3012", suburb: "Brooklyn", deliveryFee: "$40.00" },
+            { postcode: "3056", suburb: "Brunswick", deliveryFee: "$40.00" },
+            { postcode: "3057", suburb: "Brunswick East", deliveryFee: "$35.00" },
+            { postcode: "3055", suburb: "Brunswick West", deliveryFee: "$40.00" },
+            { postcode: "3105", suburb: "Bulleen", deliveryFee: "$30.00" },
+            { postcode: "3083", suburb: "Bundoora", deliveryFee: "$35.00" },
+            { postcode: "3121", suburb: "Burnley", deliveryFee: "$25.00" },
+            { postcode: "3023", suburb: "Burnside", deliveryFee: "$55.00" },
+            { postcode: "3125", suburb: "Burwood", deliveryFee: "$15.00" },
+            { postcode: "3151", suburb: "Burwood East", deliveryFee: "$15.00" },
+            { postcode: "3023", suburb: "Cairnlea", deliveryFee: "$50.00" },
+            { postcode: "3124", suburb: "Camberwell", deliveryFee: "$20.00" },
+            { postcode: "3977", suburb: "Cannons Creek", deliveryFee: "$45.00" },
+            { postcode: "3126", suburb: "Canterbury", deliveryFee: "$20.00" },
+            { postcode: "3053", suburb: "Carlton", deliveryFee: "$30.00" },
+            { postcode: "3054", suburb: "Carlton North", deliveryFee: "$35.00" },
+            { postcode: "3163", suburb: "Carnegie", deliveryFee: "$20.00" },
+            { postcode: "3197", suburb: "Carrum", deliveryFee: "$35.00" },
+            { postcode: "3201", suburb: "Carrum Downs", deliveryFee: "$35.00" },
+            { postcode: "3162", suburb: "Caulfield", deliveryFee: "$20.00" },
+            { postcode: "3145", suburb: "Caulfield East", deliveryFee: "$20.00" },
+            { postcode: "3161", suburb: "Caulfield North", deliveryFee: "$20.00" },
+            { postcode: "3162", suburb: "Caulfield South", deliveryFee: "$20.00" },
+            { postcode: "3148", suburb: "Chadstone", deliveryFee: "$15.00" },
+            { postcode: "3148", suburb: "Chadstone Centre", deliveryFee: "$15.00" },
+            { postcode: "3196", suburb: "Chelsea", deliveryFee: "$35.00" },
+            { postcode: "3196", suburb: "Chelsea Heights", deliveryFee: "$30.00" },
+            { postcode: "3192", suburb: "Cheltenham", deliveryFee: "$25.00" },
+            { postcode: "3116", suburb: "Chirnside Park", deliveryFee: "$35.00" },
+            { postcode: "3169", suburb: "Clarinda", deliveryFee: "$20.00" },
+            { postcode: "3168", suburb: "Clayton", deliveryFee: "$15.00" },
+            { postcode: "3169", suburb: "Clayton South", deliveryFee: "$15.00" },
+            { postcode: "3782", suburb: "Clematis", deliveryFee: "$40.00" },
+            { postcode: "3068", suburb: "Clifton Hill", deliveryFee: "$35.00" },
+            { postcode: "3978", suburb: "Clyde", deliveryFee: "$40.00" },
+            { postcode: "3058", suburb: "Coburg", deliveryFee: "$40.00" },
+            { postcode: "3058", suburb: "Coburg North", deliveryFee: "$40.00" },
+            { postcode: "3066", suburb: "Collingwood", deliveryFee: "$30.00" },
+            { postcode: "3048", suburb: "Coolaroo", deliveryFee: "$50.00" },
+            { postcode: "3977", suburb: "Cranbourne", deliveryFee: "$35.00" },
+            { postcode: "3977", suburb: "Cranbourne East", deliveryFee: "$35.00" },
+            { postcode: "3977", suburb: "Cranbourne North", deliveryFee: "$35.00" },
+            { postcode: "3977", suburb: "Cranbourne South", deliveryFee: "$40.00" },
+            { postcode: "3977", suburb: "Cranbourne West", deliveryFee: "$35.00" },
+            { postcode: "3121", suburb: "Cremorne", deliveryFee: "$30.00" },
+            { postcode: "3136", suburb: "Croydon", deliveryFee: "$25.00" },
+            { postcode: "3136", suburb: "Croydon Hills", deliveryFee: "$25.00" },
+            { postcode: "3136", suburb: "Croydon North", deliveryFee: "$30.00" },
+            { postcode: "3136", suburb: "Croydon South", deliveryFee: "$25.00" },
+            { postcode: "3047", suburb: "Dallas", deliveryFee: "$50.00" },
+            { postcode: "3175", suburb: "Dandenong", deliveryFee: "$20.00" },
+            { postcode: "3175", suburb: "Dandenong North", deliveryFee: "$15.00" },
+            { postcode: "3175", suburb: "Dandenong South", deliveryFee: "$25.00" },
+            { postcode: "3103", suburb: "Deepdene", deliveryFee: "$25.00" },
+            { postcode: "3023", suburb: "Deer Park", deliveryFee: "$50.00" },
+            { postcode: "3026", suburb: "Derrimut", deliveryFee: "$50.00" },
+            { postcode: "3977", suburb: "Devon Meadows", deliveryFee: "$40.00" },
+            { postcode: "3089", suburb: "Diamond Creek", deliveryFee: "$35.00" },
+            { postcode: "3172", suburb: "Dingley Village", deliveryFee: "$20.00" },
+            { postcode: "3008", suburb: "Docklands", deliveryFee: "$30.00" },
+            { postcode: "3108", suburb: "Doncaster", deliveryFee: "$20.00" },
+            { postcode: "3109", suburb: "Doncaster East", deliveryFee: "$20.00" },
+            { postcode: "3111", suburb: "Donvale", deliveryFee: "$20.00" },
+            { postcode: "3754", suburb: "Doreen", deliveryFee: "$40.00" },
+            { postcode: "3177", suburb: "Doveton", deliveryFee: "$20.00" },
+            { postcode: "3084", suburb: "Eaglemont", deliveryFee: "$30.00" },
+            { postcode: "3002", suburb: "East Melbourne", deliveryFee: "$30.00" },
+            { postcode: "3196", suburb: "Edithvale", deliveryFee: "$30.00" },
+            { postcode: "3185", suburb: "Elsternwick", deliveryFee: "$25.00" },
+            { postcode: "3095", suburb: "Eltham", deliveryFee: "$30.00" },
+            { postcode: "3095", suburb: "Eltham North", deliveryFee: "$35.00" },
+            { postcode: "3184", suburb: "Elwood", deliveryFee: "$25.00" },
+            { postcode: "3802", suburb: "Endeavour Hills", deliveryFee: "$20.00" },
+            { postcode: "3040", suburb: "Essendon", deliveryFee: "$40.00" },
+            { postcode: "3041", suburb: "Essendon Fields", deliveryFee: "$50.00" },
+            { postcode: "3041", suburb: "Essendon North", deliveryFee: "$45.00" },
+            { postcode: "3040", suburb: "Essendon West", deliveryFee: "$40.00" },
+            { postcode: "3177", suburb: "Eumemmerring", deliveryFee: "$25.00" },
+            { postcode: "3078", suburb: "Fairfield", deliveryFee: "$35.00" },
+            { postcode: "3156", suburb: "Ferntree Gully", deliveryFee: "$20.00" },
+            { postcode: "3786", suburb: "Ferny Creek", deliveryFee: "$25.00" },
+            { postcode: "3065", suburb: "Fitzroy", deliveryFee: "$30.00" },
+            { postcode: "3068", suburb: "Fitzroy North", deliveryFee: "$35.00" },
+            { postcode: "3031", suburb: "Flemington", deliveryFee: "$40.00" },
+            { postcode: "3011", suburb: "Footscray", deliveryFee: "$35.00" },
+            { postcode: "3131", suburb: "Forest Hill", deliveryFee: "$15.00" },
+            { postcode: "3199", suburb: "Frankston", deliveryFee: "$40.00" },
+            { postcode: "3200", suburb: "Frankston North", deliveryFee: "$35.00" },
+            { postcode: "3199", suburb: "Frankston South", deliveryFee: "$40.00" },
+            { postcode: "3185", suburb: "Gardenvale", deliveryFee: "$25.00" },
+            { postcode: "3043", suburb: "Gladstone Park", deliveryFee: "$50.00" },
+            { postcode: "3163", suburb: "Glen Huntly", deliveryFee: "$20.00" },
+            { postcode: "3150", suburb: "Glen Waverley", deliveryFee: "$10.00" },
+            { postcode: "3046", suburb: "Glenroy", deliveryFee: "$45.00" },
+            { postcode: "3043", suburb: "Gowanbrae", deliveryFee: "$50.00" },
+            { postcode: "3088", suburb: "Greensborough", deliveryFee: "$35.00" },
+            { postcode: "3046", suburb: "Hadfield", deliveryFee: "$40.00" },
+            { postcode: "3803", suburb: "Hallam", deliveryFee: "$25.00" },
+            { postcode: "3188", suburb: "Hampton", deliveryFee: "$25.00" },
+            { postcode: "3188", suburb: "Hampton East", deliveryFee: "$25.00" },
+            { postcode: "3976", suburb: "Hampton Park", deliveryFee: "$30.00" },
+            { postcode: "3806", suburb: "Harkaway", deliveryFee: "$30.00" },
+            { postcode: "3122", suburb: "Hawthorn", deliveryFee: "$25.00" },
+            { postcode: "3123", suburb: "Hawthorn East", deliveryFee: "$20.00" },
+            { postcode: "3202", suburb: "Heatherton", deliveryFee: "$20.00" },
+            { postcode: "3135", suburb: "Heathmont", deliveryFee: "$20.00" },
+            { postcode: "3084", suburb: "Heidelberg", deliveryFee: "$30.00" },
+            { postcode: "3081", suburb: "Heidelberg Heights", deliveryFee: "$30.00" },
+            { postcode: "3081", suburb: "Heidelberg West", deliveryFee: "$30.00" },
+            { postcode: "3190", suburb: "Highett", deliveryFee: "$25.00" },
+            { postcode: "3032", suburb: "Highpoint City", deliveryFee: "$40.00" },
+            { postcode: "3166", suburb: "Hughesdale", deliveryFee: "$15.00" },
+            { postcode: "3166", suburb: "Huntingdale", deliveryFee: "$15.00" },
+            { postcode: "3099", suburb: "Hurstbridge", deliveryFee: "$40.00" },
+            { postcode: "3079", suburb: "Ivanhoe", deliveryFee: "$30.00" },
+            { postcode: "3079", suburb: "Ivanhoe East", deliveryFee: "$30.00" },
+            { postcode: "3047", suburb: "Jacana", deliveryFee: "$45.00" },
+            { postcode: "3977", suburb: "Junction Village", deliveryFee: "$35.00" },
+            { postcode: "3791", suburb: "Kallista", deliveryFee: "$30.00" },
+            { postcode: "3766", suburb: "Kalorama", deliveryFee: "$35.00" },
+            { postcode: "3033", suburb: "Keilor East", deliveryFee: "$50.00" },
+            { postcode: "3042", suburb: "Keilor Park", deliveryFee: "$50.00" },
+            { postcode: "3031", suburb: "Kensington", deliveryFee: "$35.00" },
+            { postcode: "3101", suburb: "Kew", deliveryFee: "$30.00" },
+            { postcode: "3102", suburb: "Kew East", deliveryFee: "$30.00" },
+            { postcode: "3173", suburb: "Keysborough", deliveryFee: "$25.00" },
+            { postcode: "3137", suburb: "Kilsyth", deliveryFee: "$30.00" },
+            { postcode: "3137", suburb: "Kilsyth South", deliveryFee: "$25.00" },
+            { postcode: "3083", suburb: "Kingsbury", deliveryFee: "$35.00" },
+            { postcode: "3012", suburb: "Kingsville", deliveryFee: "$35.00" },
+            { postcode: "3180", suburb: "Knoxfield", deliveryFee: "$20.00" },
+            { postcode: "3144", suburb: "Kooyong", deliveryFee: "$20.00" },
+            { postcode: "3910", suburb: "Langwarrin", deliveryFee: "$40.00" },
+            { postcode: "3911", suburb: "Langwarrin South", deliveryFee: "$40.00" },
+            { postcode: "3028", suburb: "Laverton", deliveryFee: "$45.00" },
+            { postcode: "3026", suburb: "Laverton North", deliveryFee: "$40.00" },
+            { postcode: "3140", suburb: "Lilydale", deliveryFee: "$35.00" },
+            { postcode: "3093", suburb: "Lower Plenty", deliveryFee: "$30.00" },
+            { postcode: "3975", suburb: "Lynbrook", deliveryFee: "$30.00" },
+            { postcode: "3975", suburb: "Lyndhurst", deliveryFee: "$30.00" },
+            { postcode: "3156", suburb: "Lysterfield", deliveryFee: "$20.00" },
+            { postcode: "3156", suburb: "Lysterfield South", deliveryFee: "$25.00" },
+            { postcode: "3085", suburb: "Macleod", deliveryFee: "$35.00" },
+            { postcode: "3012", suburb: "Maidstone", deliveryFee: "$40.00" },
+            { postcode: "3144", suburb: "Malvern", deliveryFee: "$20.00" },
+            { postcode: "3145", suburb: "Malvern East", deliveryFee: "$15.00" },
+            { postcode: "3032", suburb: "Maribyrnong", deliveryFee: "$40.00" },
+            { postcode: "3204", suburb: "Mckinnon", deliveryFee: "$20.00" },
+            { postcode: "3048", suburb: "Meadow Heights", deliveryFee: "$50.00" },
+            { postcode: "3000", suburb: "Melbourne", deliveryFee: "$30.00" },
+            { postcode: "3194", suburb: "Mentone", deliveryFee: "$25.00" },
+            { postcode: "3754", suburb: "Mernda", deliveryFee: "$45.00" },
+            { postcode: "3206", suburb: "Middle Park", deliveryFee: "$35.00" },
+            { postcode: "3082", suburb: "Mill Park", deliveryFee: "$40.00" },
+            { postcode: "3132", suburb: "Mitcham", deliveryFee: "$15.00" },
+            { postcode: "3127", suburb: "Mont Albert", deliveryFee: "$20.00" },
+            { postcode: "3129", suburb: "Mont Albert North", deliveryFee: "$20.00" },
+            { postcode: "3094", suburb: "Montmorency", deliveryFee: "$30.00" },
+            { postcode: "3765", suburb: "Montrose", deliveryFee: "$30.00" },
+            { postcode: "3039", suburb: "Moonee Ponds", deliveryFee: "$40.00" },
+            { postcode: "3189", suburb: "Moorabbin", deliveryFee: "$20.00" },
+            { postcode: "3194", suburb: "Moorabbin Airport", deliveryFee: "$20.00" },
+            { postcode: "3933", suburb: "Moorooduc", deliveryFee: "$50.00" },
+            { postcode: "3138", suburb: "Mooroolbark", deliveryFee: "$30.00" },
+            { postcode: "3195", suburb: "Mordialloc", deliveryFee: "$25.00" },
+            { postcode: "3058", suburb: "Moreland", deliveryFee: "$40.00" },
+            { postcode: "3767", suburb: "Mount Dandenong", deliveryFee: "$25.00" },
+            { postcode: "3930", suburb: "Mount Eliza", deliveryFee: "$45.00" },
+            { postcode: "3796", suburb: "Mount Evelyn", deliveryFee: "$35.00" },
+            { postcode: "3149", suburb: "Mount Waverley", deliveryFee: "$10.00" },
+            { postcode: "3170", suburb: "Mulgrave", deliveryFee: "$15.00" },
+            { postcode: "3163", suburb: "Murrumbeena", deliveryFee: "$20.00" },
+            { postcode: "3805", suburb: "Narre Warren", deliveryFee: "$30.00" },
+            { postcode: "3804", suburb: "Narre Warren East", deliveryFee: "$30.00" },
+            { postcode: "3804", suburb: "Narre Warren North", deliveryFee: "$25.00" },
+            { postcode: "3805", suburb: "Narre Warren South", deliveryFee: "$30.00" },
+            { postcode: "3015", suburb: "Newport", deliveryFee: "$35.00" },
+            { postcode: "3042", suburb: "Niddrie", deliveryFee: "$45.00" },
+            { postcode: "3174", suburb: "Noble Park", deliveryFee: "$15.00" },
+            { postcode: "3174", suburb: "Noble Park North", deliveryFee: "$15.00" },
+            { postcode: "3051", suburb: "North Melbourne", deliveryFee: "$35.00" },
+            { postcode: "3113", suburb: "North Warrandyte", deliveryFee: "$25.00" },
+            { postcode: "3070", suburb: "Northcote", deliveryFee: "$35.00" },
+            { postcode: "3168", suburb: "Notting Hill", deliveryFee: "$10.00" },
+            { postcode: "3131", suburb: "Nunawading", deliveryFee: "$15.00" },
+            { postcode: "3046", suburb: "Oak Park", deliveryFee: "$40.00" },
+            { postcode: "3166", suburb: "Oakleigh", deliveryFee: "$15.00" },
+            { postcode: "3166", suburb: "Oakleigh East", deliveryFee: "$15.00" },
+            { postcode: "3167", suburb: "Oakleigh South", deliveryFee: "$15.00" },
+            { postcode: "3204", suburb: "Ormond", deliveryFee: "$20.00" },
+            { postcode: "3759", suburb: "Panton Hill", deliveryFee: "$35.00" },
+            { postcode: "3114", suburb: "Park Orchards", deliveryFee: "$20.00" },
+            { postcode: "3195", suburb: "Parkdale", deliveryFee: "$25.00" },
+            { postcode: "3052", suburb: "Parkville", deliveryFee: "$35.00" },
+            { postcode: "3044", suburb: "Pascoe Vale", deliveryFee: "$40.00" },
+            { postcode: "3044", suburb: "Pascoe Vale South", deliveryFee: "$40.00" },
+            { postcode: "3197", suburb: "Patterson Lakes", deliveryFee: "$35.00" },
+            { postcode: "3912", suburb: "Pearcedale", deliveryFee: "$40.00" },
+            { postcode: "3090", suburb: "Plenty", deliveryFee: "$35.00" },
+            { postcode: "3030", suburb: "Point Cook", deliveryFee: "$55.00" },
+            { postcode: "3207", suburb: "Port Melbourne", deliveryFee: "$35.00" },
+            { postcode: "3181", suburb: "Prahran", deliveryFee: "$25.00" },
+            { postcode: "3054", suburb: "Princes Hill", deliveryFee: "$35.00" },
+            { postcode: "3095", suburb: "Research", deliveryFee: "$35.00" },
+            { postcode: "3073", suburb: "Reservoir", deliveryFee: "$35.00" },
+            { postcode: "3121", suburb: "Richmond", deliveryFee: "$25.00" },
+            { postcode: "3134", suburb: "Ringwood", deliveryFee: "$20.00" },
+            { postcode: "3135", suburb: "Ringwood East", deliveryFee: "$20.00" },
+            { postcode: "3134", suburb: "Ringwood North", deliveryFee: "$20.00" },
+            { postcode: "3185", suburb: "Ripponlea", deliveryFee: "$25.00" },
+            { postcode: "3084", suburb: "Rosanna", deliveryFee: "$30.00" },
+            { postcode: "3178", suburb: "Rowville", deliveryFee: "$20.00" },
+            { postcode: "3977", suburb: "Sandhurst", deliveryFee: "$30.00" },
+            { postcode: "3191", suburb: "Sandringham", deliveryFee: "$25.00" },
+            { postcode: "3787", suburb: "Sassafras", deliveryFee: "$30.00" },
+            { postcode: "3179", suburb: "Scoresby", deliveryFee: "$15.00" },
+            { postcode: "3028", suburb: "Seabrook", deliveryFee: "$45.00" },
+            { postcode: "3198", suburb: "Seaford", deliveryFee: "$35.00" },
+            { postcode: "3018", suburb: "Seaholme", deliveryFee: "$40.00" },
+            { postcode: "3011", suburb: "Seddon", deliveryFee: "$35.00" },
+            { postcode: "3159", suburb: "Selby", deliveryFee: "$35.00" },
+            { postcode: "3977", suburb: "Skye", deliveryFee: "$40.00" },
+            { postcode: "3912", suburb: "Somerville", deliveryFee: "$45.00" },
+            { postcode: "3015", suburb: "South Kingsville", deliveryFee: "$35.00" },
+            { postcode: "3205", suburb: "South Melbourne", deliveryFee: "$30.00" },
+            { postcode: "3752", suburb: "South Morang", deliveryFee: "$40.00" },
+            { postcode: "3006", suburb: "South Wharf", deliveryFee: "$30.00" },
+            { postcode: "3141", suburb: "South Yarra", deliveryFee: "$25.00" },
+            { postcode: "3006", suburb: "Southbank", deliveryFee: "$30.00" },
+            { postcode: "3015", suburb: "Spotswood", deliveryFee: "$35.00" },
+            { postcode: "3171", suburb: "Springvale", deliveryFee: "$15.00" },
+            { postcode: "3172", suburb: "Springvale South", deliveryFee: "$15.00" },
+            { postcode: "3088", suburb: "St Helena", deliveryFee: "$35.00" },
+            { postcode: "3182", suburb: "St Kilda", deliveryFee: "$25.00" },
+            { postcode: "3183", suburb: "St Kilda East", deliveryFee: "$25.00" },
+            { postcode: "3182", suburb: "St Kilda West", deliveryFee: "$35.00" },
+            { postcode: "3041", suburb: "Strathmore", deliveryFee: "$40.00" },
+            { postcode: "3041", suburb: "Strathmore Heights", deliveryFee: "$45.00" },
+            { postcode: "3020", suburb: "Sunshine", deliveryFee: "$40.00" },
+            { postcode: "3020", suburb: "Sunshine North", deliveryFee: "$50.00" },
+            { postcode: "3020", suburb: "Sunshine West", deliveryFee: "$40.00" },
+            { postcode: "3127", suburb: "Surrey Hills", deliveryFee: "$20.00" },
+            { postcode: "3160", suburb: "Tecoma", deliveryFee: "$25.00" },
+            { postcode: "3106", suburb: "Templestowe", deliveryFee: "$25.00" },
+            { postcode: "3107", suburb: "Templestowe Lower", deliveryFee: "$30.00" },
+            { postcode: "3154", suburb: "The Basin", deliveryFee: "$25.00" },
+            { postcode: "3792", suburb: "The Patch", deliveryFee: "$35.00" },
+            { postcode: "3071", suburb: "Thornbury", deliveryFee: "$35.00" },
+            { postcode: "3142", suburb: "Toorak", deliveryFee: "$20.00" },
+            { postcode: "3012", suburb: "Tottenham", deliveryFee: "$40.00" },
+            { postcode: "3032", suburb: "Travancore", deliveryFee: "$35.00" },
+            { postcode: "3029", suburb: "Truganina", deliveryFee: "$50.00" },
+            { postcode: "3043", suburb: "Tullamarine", deliveryFee: "$50.00" },
+            { postcode: "3913", suburb: "Tyabb", deliveryFee: "$50.00" },
+            { postcode: "3156", suburb: "Upper Ferntree Gully", deliveryFee: "$20.00" },
+            { postcode: "3158", suburb: "Upwey", deliveryFee: "$25.00" },
+            { postcode: "3133", suburb: "Vermont", deliveryFee: "$15.00" },
+            { postcode: "3133", suburb: "Vermont South", deliveryFee: "$15.00" },
+            { postcode: "3084", suburb: "Viewbank", deliveryFee: "$30.00" },
+            { postcode: "3152", suburb: "Wantirna", deliveryFee: "$20.00" },
+            { postcode: "3152", suburb: "Wantirna South", deliveryFee: "$15.00" },
+            { postcode: "3113", suburb: "Warrandyte", deliveryFee: "$25.00" },
+            { postcode: "3134", suburb: "Warrandyte South", deliveryFee: "$25.00" },
+            { postcode: "3134", suburb: "Warranwood", deliveryFee: "$25.00" },
+            { postcode: "3195", suburb: "Waterways", deliveryFee: "$30.00" },
+            { postcode: "3087", suburb: "Watsonia", deliveryFee: "$35.00" },
+            { postcode: "3087", suburb: "Watsonia North", deliveryFee: "$35.00" },
+            { postcode: "3096", suburb: "Wattle Glen", deliveryFee: "$35.00" },
+            { postcode: "3012", suburb: "West Footscray", deliveryFee: "$40.00" },
+            { postcode: "3003", suburb: "West Melbourne", deliveryFee: "$35.00" },
+            { postcode: "3049", suburb: "Westmeadows", deliveryFee: "$50.00" },
+            { postcode: "3150", suburb: "Wheelers Hill", deliveryFee: "$10.00" },
+            { postcode: "3027", suburb: "Williams Landing", deliveryFee: "$50.00" },
+            { postcode: "3016", suburb: "Williamstown", deliveryFee: "$40.00" },
+            { postcode: "3016", suburb: "Williamstown North", deliveryFee: "$40.00" },
+            { postcode: "3181", suburb: "Windsor", deliveryFee: "$25.00" },
+            { postcode: "3115", suburb: "Wonga Park", deliveryFee: "$30.00" },
+            { postcode: "3085", suburb: "Yallambie", deliveryFee: "$30.00" },
+            { postcode: "3091", suburb: "Yarrambat", deliveryFee: "$40.00" },
+            { postcode: "3013", suburb: "Yarraville", deliveryFee: "$35.00" }
+        ];
+
+        const suburbListElement = document.getElementById('suburbList');
+        const searchInputElement = document.getElementById('searchInput');
+        const noResultsMessageElement = document.getElementById('noResultsMessage');
+
+        // Function to render the list of suburbs
+        function renderSuburbs(filteredSuburbs) {
+            suburbListElement.innerHTML = ''; // Clear current list
+
+            if (filteredSuburbs.length === 0) {
+                noResultsMessageElement.classList.remove('hidden');
+            } else {
+                noResultsMessageElement.classList.add('hidden');
+            }
+
+            filteredSuburbs.forEach(suburb => {
+                const listItem = document.createElement('div');
+                listItem.className = 'card-item bg-pink-50 p-4 rounded-lg shadow-sm hover:shadow-md flex justify-between items-center transition-all duration-200 ease-in-out';
+                
+                const suburbInfo = document.createElement('div');
+                suburbInfo.className = 'text-gray-700';
+                const suburbName = document.createElement('p');
+                suburbName.className = 'font-semibold text-pink-600';
+                suburbName.textContent = suburb.suburb;
+                const postcodeInfo = document.createElement('p');
+                postcodeInfo.className = 'text-sm text-pink-400';
+                postcodeInfo.textContent = `Postcode: ${suburb.postcode}`;
+                
+                suburbInfo.appendChild(suburbName);
+                suburbInfo.appendChild(postcodeInfo);
+
+                const deliveryFee = document.createElement('p');
+                deliveryFee.className = 'text-lg font-bold text-pink-500';
+                deliveryFee.textContent = suburb.deliveryFee;
+
+                listItem.appendChild(suburbInfo);
+                listItem.appendChild(deliveryFee);
+                suburbListElement.appendChild(listItem);
+            });
+        }
+
+        // Function to filter suburbs based on search input
+        function filterSuburbs() {
+            const searchTerm = searchInputElement.value.toLowerCase().trim();
+            if (!searchTerm) {
+                renderSuburbs(suburbsData); // Show all if search is empty
+                return;
+            }
+
+            const filtered = suburbsData.filter(suburb => 
+                suburb.suburb.toLowerCase().includes(searchTerm) || 
+                suburb.postcode.includes(searchTerm)
+            );
+            renderSuburbs(filtered);
+        }
+
+        // Event listener for the search input
+        searchInputElement.addEventListener('input', filterSuburbs);
+
+        // Initial render of all suburbs
+        renderSuburbs(suburbsData);
+
+    </script>
+</body>
+</html>
